@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.util.ArrayList;
+
 /**
  * Created by baidu on 16/3/2.
  * 自定义视图类
@@ -19,7 +21,8 @@ public class BoxDrawingView extends View {
     private static final String TAG = "BoxDrawingView";
     private Paint mBackgroundPaint;
     private Paint mBoxPaint;
-    private Box mBox;
+    private Box mCurrentBox;
+    private ArrayList<Box> mBoxes;
 
     public BoxDrawingView(Context context) {
         this(context, null);
@@ -32,6 +35,7 @@ public class BoxDrawingView extends View {
         mBoxPaint = new Paint();
         mBoxPaint.setColor(Color.RED);
         mBoxPaint.setAlpha(100);
+        mBoxes = new ArrayList<>();
     }
 
     @Override
@@ -42,16 +46,19 @@ public class BoxDrawingView extends View {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 action = "ACTION_DOWN";
-                mBox = new Box(current);
+                mCurrentBox = new Box(current);
+                invalidate();
                 break;
             case MotionEvent.ACTION_MOVE:
                 action = "ACTION_MOVE";
-                mBox.setCurrent(current);
-                invalidate();
+                if (mCurrentBox != null) {
+                    mCurrentBox.setCurrent(current);
+                    invalidate();
+                }
                 break;
             case MotionEvent.ACTION_UP:
                 action = "ACTION_UP";
-                mBox = null;
+                //mCurrentBox = null;
                 break;
             case MotionEvent.ACTION_CANCEL:
                 action = "ACTION_CANCEL";
@@ -65,11 +72,11 @@ public class BoxDrawingView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         canvas.drawPaint(mBackgroundPaint);
-        if (mBox != null) {
-            float left = Math.min(mBox.getOrigin().x, mBox.getCurrent().x);
-            float right = Math.max(mBox.getOrigin().x, mBox.getCurrent().x);
-            float top = Math.min(mBox.getOrigin().y, mBox.getCurrent().y);
-            float bottom = Math.max(mBox.getOrigin().y, mBox.getCurrent().y);
+        if (mCurrentBox != null) {
+            float left = Math.min(mCurrentBox.getOrigin().x, mCurrentBox.getCurrent().x);
+            float right = Math.max(mCurrentBox.getOrigin().x, mCurrentBox.getCurrent().x);
+            float top = Math.min(mCurrentBox.getOrigin().y, mCurrentBox.getCurrent().y);
+            float bottom = Math.max(mCurrentBox.getOrigin().y, mCurrentBox.getCurrent().y);
             canvas.drawRect(left, top, right, bottom, mBoxPaint);
         }
     }
