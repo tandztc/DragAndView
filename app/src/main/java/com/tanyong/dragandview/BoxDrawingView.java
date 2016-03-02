@@ -47,7 +47,8 @@ public class BoxDrawingView extends View {
             case MotionEvent.ACTION_DOWN:
                 action = "ACTION_DOWN";
                 mCurrentBox = new Box(current);
-                invalidate();
+                mBoxes.add(mCurrentBox);
+                //invalidate();
                 break;
             case MotionEvent.ACTION_MOVE:
                 action = "ACTION_MOVE";
@@ -72,11 +73,11 @@ public class BoxDrawingView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         canvas.drawPaint(mBackgroundPaint);
-        if (mCurrentBox != null) {
-            float left = Math.min(mCurrentBox.getOrigin().x, mCurrentBox.getCurrent().x);
-            float right = Math.max(mCurrentBox.getOrigin().x, mCurrentBox.getCurrent().x);
-            float top = Math.min(mCurrentBox.getOrigin().y, mCurrentBox.getCurrent().y);
-            float bottom = Math.max(mCurrentBox.getOrigin().y, mCurrentBox.getCurrent().y);
+        for (Box box : mBoxes) {
+            float left = Math.min(box.getOrigin().x, box.getCurrent().x);
+            float right = Math.max(box.getOrigin().x, box.getCurrent().x);
+            float top = Math.min(box.getOrigin().y, box.getCurrent().y);
+            float bottom = Math.max(box.getOrigin().y, box.getCurrent().y);
             canvas.drawRect(left, top, right, bottom, mBoxPaint);
         }
     }
