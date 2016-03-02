@@ -81,4 +81,10 @@ public class BoxDrawingView extends View {
             canvas.drawRect(left, top, right, bottom, mBoxPaint);
         }
     }
+
+    public void clearBoxes() {
+        mBoxes.clear();
+        mCurrentBox = null;
+        invalidate();
+    }
 }
