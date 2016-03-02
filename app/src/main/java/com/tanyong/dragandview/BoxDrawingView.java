@@ -18,6 +18,8 @@ public class BoxDrawingView extends View {
 
     private static final String TAG = "BoxDrawingView";
     private Paint mBackgroundPaint;
+    private Paint mBoxPaint;
+    private Box mBox;
 
     public BoxDrawingView(Context context) {
         this(context, null);
@@ -27,6 +29,9 @@ public class BoxDrawingView extends View {
         super(context, attrs);
         mBackgroundPaint = new Paint();
         mBackgroundPaint.setColor(Color.GRAY);
+        mBoxPaint = new Paint();
+        mBoxPaint.setColor(Color.RED);
+        mBoxPaint.setAlpha(100);
     }
 
     @Override
@@ -37,12 +42,16 @@ public class BoxDrawingView extends View {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 action = "ACTION_DOWN";
+                mBox = new Box(current);
                 break;
             case MotionEvent.ACTION_MOVE:
                 action = "ACTION_MOVE";
+                mBox.setCurrent(current);
+                invalidate();
                 break;
             case MotionEvent.ACTION_UP:
                 action = "ACTION_UP";
+                mBox = null;
                 break;
             case MotionEvent.ACTION_CANCEL:
                 action = "ACTION_CANCEL";
@@ -56,5 +65,12 @@ public class BoxDrawingView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         canvas.drawPaint(mBackgroundPaint);
+        if (mBox != null) {
+            float left = Math.min(mBox.getOrigin().x, mBox.getCurrent().x);
+            float right = Math.max(mBox.getOrigin().x, mBox.getCurrent().x);
+            float top = Math.min(mBox.getOrigin().y, mBox.getCurrent().y);
+            float bottom = Math.max(mBox.getOrigin().y, mBox.getCurrent().y);
+            canvas.drawRect(left, top, right, bottom, mBoxPaint);
+        }
     }
 }
